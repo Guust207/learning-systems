@@ -14,3 +14,7 @@ _Contents:_ Presentation of results and demo of implementation.
 ### Assignment 4 – Tsetlin Machine Analysis (November 6)
 
 ## Part III: Learning Systems Project
+* Presentation of Project Suggestions: _September 18_
+* Presentation of Project Status with Status and Feedback: _December 4_
+* Project report deadline: _December 19_
+* Evaluation (Graded): Final Project Report
