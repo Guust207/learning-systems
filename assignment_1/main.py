@@ -52,8 +52,10 @@ for i in range(5):
 epochs = []
 total_M = []
 state_overview = []
+no_wins = 0
+no_rounds = 10000
 
-for i in range(10000):
+for i in range(no_rounds):
     current_states = []
     M = 0
     for ta in ta_list:
@@ -76,9 +78,15 @@ for i in range(10000):
     total_M.append(M)
     state_overview.append(current_states)
 
+    # Check "win"
+    if M == 3:
+        no_wins += 1
+
 for i in range(len(ta_list)):
     action = "Yes" if ta_list[i].make_decision() else "No"
     print(f"Tsetlin Automata {i+1} final state: {ta_list[i].state} ({action})")
+
+print(f"\nWin rate: {no_wins} wins of {no_rounds} rounds. ({(no_wins / no_rounds) * 100:.1f}%)")
 
 df = pd.DataFrame({'Epochs': epochs, 'M': total_M})
 window_size = max(1, int(len(df) * 0.02))
