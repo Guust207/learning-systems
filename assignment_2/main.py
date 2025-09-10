@@ -81,32 +81,37 @@ def type_ii_feedback(observation, memory):
             elif observation[feature] == True:
                 memory.memorize_always('NOT ' + feature)
 
+
 # Task 2
 patients = [
     # 1
     {"lt40": False, "ge40": True, "premeno": False, "inv0-2": False, "inv3-5": True, "inv6-8": False, "deg1": False,
-     "deg2": False, "deg3": True, "rec": True},
+     "deg2": False, "deg3": True},
 
     # 2
     {"lt40": True, "ge40": False, "premeno": False, "inv0-2": True, "inv3-5": False, "inv6-8": False, "deg1": False,
-     "deg2": False, "deg3": True, "rec": False},
+     "deg2": False, "deg3": True},
 
     # 3
     {"lt40": False, "ge40": True, "premeno": False, "inv0-2": False, "inv3-5": False, "inv6-8": True, "deg1": False,
-     "deg2": False, "deg3": True, "rec": True},
+     "deg2": False, "deg3": True},
 
     # 4
     {"lt40": False, "ge40": True, "premeno": False, "inv0-2": True, "inv3-5": False, "inv6-8": False, "deg1": False,
-     "deg2": True, "deg3": False, "rec": False},
+     "deg2": True, "deg3": False},
 
     # 5
     {"lt40": False, "ge40": False, "premeno": True, "inv0-2": True, "inv3-5": False, "inv6-8": False, "deg1": False,
-     "deg2": False, "deg3": True, "rec": True},
+     "deg2": False, "deg3": True},
 
     # 6
     {"lt40": False, "ge40": False, "premeno": True, "inv0-2": True, "inv3-5": False, "inv6-8": False, "deg1": True,
-     "deg2": False, "deg3": False, "rec": False}
+     "deg2": False, "deg3": False}
 ]
+
+# Separate Recurrence and Non-Recurrence to two datasets
+rec_patients = [patients[x] for x in (0, 2, 4)]
+non_rec_patients = [patients[x] for x in (1, 3, 5)]
 
 # Rules:
 # R1: if Deg-malign 3 and not Menopause lt40 then Recurrence
@@ -118,18 +123,45 @@ memorize_value = 0.1
 
 # Task 3
 R1 = Memory(forget_value, memorize_value,
-            {"lt40": 5, "NOT lt40": 6, "ge40": 5, "NOT ge40": 5, "premeno": 5, "NOT premeno": 5, "inv0-2": 5,
-             "inv3-5": 5, "inv6-8": 5, "deg1": 5, "NOT deg1": 5, "deg2": 5, "NOT deg2": 5, "deg3": 6, "NOT deg3": 5}
+            {
+                "lt40": 5, "NOT lt40": 6,
+                "ge40": 5, "NOT ge40": 5,
+                "premeno": 5, "NOT premeno": 5,
+                "inv0-2": 5, "NOT inv0-2": 5,
+                "inv3-5": 5, "NOT inv3-5": 5,
+                "inv6-8": 5, "NOT inv6-8": 5,
+                "deg1": 5, "NOT deg1": 5,
+                "deg2": 5, "NOT deg2": 5,
+                "deg3": 6, "NOT deg3": 5
+            }
             )
 
 R2 = Memory(forget_value, memorize_value,
-            {"lt40": 5, "NOT lt40": 5, "ge40": 5, "NOT ge40": 5, "premeno": 5, "NOT premeno": 5, "inv0-2": 5,
-             "inv3-5": 5, "inv6-8": 5, "deg1": 5, "NOT deg1": 5, "deg2": 5, "NOT deg2": 5, "deg3": 6, "NOT deg3": 5}
+            {
+                "lt40": 5, "NOT lt40": 5,
+                "ge40": 5, "NOT ge40": 5,
+                "premeno": 5, "NOT premeno": 5,
+                "inv0-2": 5, "NOT inv0-2": 5,
+                "inv3-5": 5, "NOT inv3-5": 5,
+                "inv6-8": 5, "NOT inv6-8": 5,
+                "deg1": 5, "NOT deg1": 5,
+                "deg2": 5, "NOT deg2": 5,
+                "deg3": 6, "NOT deg3": 5
+            }
             )
 
 R3 = Memory(forget_value, memorize_value,
-            {"lt40": 5, "NOT lt40": 5, "ge40": 5, "NOT ge40": 5, "premeno": 5, "NOT premeno": 5, "inv0-2": 6,
-             "inv3-5": 5, "inv6-8": 5, "deg1": 5, "NOT deg1": 5, "deg2": 5, "NOT deg2": 5, "deg3": 5, "NOT deg3": 5}
+            {
+                "lt40": 5, "NOT lt40": 5,
+                "ge40": 5, "NOT ge40": 5,
+                "premeno": 5, "NOT premeno": 5,
+                "inv0-2": 6, "NOT inv0-2": 5,
+                "inv3-5": 5, "NOT inv3-5": 5,
+                "inv6-8": 5, "NOT inv6-8": 5,
+                "deg1": 5, "NOT deg1": 5,
+                "deg2": 5, "NOT deg2": 5,
+                "deg3": 5, "NOT deg3": 5
+            }
             )
 
 recurrence_rules = [R1, R2]
@@ -139,6 +171,7 @@ non_recurrence_rules = [R3]
 print("--- Task 4 ---")
 for i in range(len(patients)):
     print(
-        f"Patient {i} classified as: {classify(patients[i], recurrence_rules, non_recurrence_rules)}."
-        f" Actual: {"Recurrence " if patients[i]["rec"] == True else "Non-Recurrence"}")
+        f"Patient {i+1} classified as: {classify(patients[i], recurrence_rules, non_recurrence_rules)}."
+        f" Actual: {"Recurrence " if patients[i] in rec_patients else "Non-Recurrence"}")
+
 
