@@ -135,3 +135,10 @@ R3 = Memory(forget_value, memorize_value,
 recurrence_rules = [R1, R2]
 non_recurrence_rules = [R3]
 
+# Task 4
+print("--- Task 4 ---")
+for i in range(len(patients)):
+    print(
+        f"Patient {i} classified as: {classify(patients[i], recurrence_rules, non_recurrence_rules)}."
+        f" Actual: {"Recurrence " if patients[i]["rec"] == True else "Non-Recurrence"}")
+
