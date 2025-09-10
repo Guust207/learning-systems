@@ -174,4 +174,36 @@ for i in range(len(patients)):
         f"Patient {i+1} classified as: {classify(patients[i], recurrence_rules, non_recurrence_rules)}."
         f" Actual: {"Recurrence " if patients[i] in rec_patients else "Non-Recurrence"}")
 
+# Task 5
+print("\n--- Task 5 ---")
 
+# Change forget- and memorize value on R1 and R3
+R1.forget_value = R3.forget_value = 0.8
+R1.memorize_value = R3.memorize_value = 0.2
+
+# Use R1 to learn new rule for Recurrence.
+n = 100  # Number of rounds
+for i in range(n):
+    observation_id = random.choice(list(range(len(rec_patients))))
+    choose_rec = random.choice([0, 1])  # Rec (1) or Non-Rec (0)
+    if choose_rec == 1:
+        type_i_feedback(rec_patients[observation_id], R1)
+    else:
+        type_ii_feedback(non_rec_patients[observation_id], R1)
+
+print("IF " + " AND ".join(R1.get_condition()) + " THEN Recurrence")
+
+# Task 6
+print("\n--- Task 6 ---")
+
+# Use R3 to learn new rule for Non-Recurrence.
+n = 100  # Number of rounds
+for i in range(n):
+    observation_id = random.choice(list(range(len(rec_patients))))
+    choose_rec = random.choice([0, 1])  # Rec (1) or Non-Rec (0)
+    if choose_rec == 1:
+        type_i_feedback(non_rec_patients[observation_id], R3)
+    else:
+        type_ii_feedback(rec_patients[observation_id], R3)
+
+print("IF " + " AND ".join(R3.get_condition()) + " THEN Non-Recurrence")
