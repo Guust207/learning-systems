@@ -209,7 +209,7 @@ non_rec_rule = Memory(forget_value, memorize_value,
             )
 
 # Learn new rule for Recurrence
-n = 100  # Number of rounds
+n = 1000  # Number of rounds
 for i in range(n):
     observation_id = random.choice(list(range(len(rec_patients))))
     choose_rec = random.choice([0, 1])  # Rec (1) or Non-Rec (0)
@@ -224,10 +224,9 @@ print("IF " + " AND ".join(rec_rule.get_condition()) + " THEN Recurrence")
 print("\n--- Task 6 ---")
 
 # Learn new rule for Non-Recurrence
-n = 100  # Number of rounds
 for i in range(n):
     observation_id = random.choice(list(range(len(rec_patients))))
-    choose_rec = random.choice([0, 1])  # Rec (1) or Non-Rec (0)
+    choose_rec = random.choice([0, 1])  # Non-Rec (1) or Rec (0)
     if choose_rec == 1:
         type_i_feedback(non_rec_patients[observation_id], non_rec_rule)
     else:
@@ -278,7 +277,6 @@ non_rec_rule = Memory(forget_value, memorize_value,
             )
 
 # Learn new rule for Recurrence
-n = 100  # Number of rounds
 for i in range(n):
     observation_id = random.choice(list(range(len(rec_patients))))
     choose_rec = random.choice([0, 1])  # Rec (1) or Non-Rec (0)
@@ -290,10 +288,9 @@ for i in range(n):
 print("IF " + " AND ".join(rec_rule.get_condition()) + " THEN Recurrence")
 
 # Learn new rule for Non-Recurrence
-n = 100  # Number of rounds
 for i in range(n):
     observation_id = random.choice(list(range(len(rec_patients))))
-    choose_rec = random.choice([0, 1])  # Rec (1) or Non-Rec (0)
+    choose_rec = random.choice([0, 1])  # Non-Rec (1) or Rec (0)
     if choose_rec == 1:
         type_i_feedback(non_rec_patients[observation_id], non_rec_rule)
     else:
@@ -344,7 +341,6 @@ non_rec_rule = Memory(forget_value, memorize_value,
             )
 
 # Learn new rule for Recurrence
-n = 100  # Number of rounds
 for i in range(n):
     observation_id = random.choice(list(range(len(rec_patients))))
     choose_rec = random.choice([0, 1])  # Rec (1) or Non-Rec (0)
@@ -356,10 +352,9 @@ for i in range(n):
 print("IF " + " AND ".join(rec_rule.get_condition()) + " THEN Recurrence")
 
 # Learn new rule for Non-Recurrence
-n = 100  # Number of rounds
 for i in range(n):
     observation_id = random.choice(list(range(len(rec_patients))))
-    choose_rec = random.choice([0, 1])  # Rec (1) or Non-Rec (0)
+    choose_rec = random.choice([0, 1])  # Non-Rec (1) or Rec (0)
     if choose_rec == 1:
         type_i_feedback(non_rec_patients[observation_id], non_rec_rule)
     else:
