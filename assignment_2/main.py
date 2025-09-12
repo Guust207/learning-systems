@@ -176,34 +176,200 @@ for i in range(len(patients)):
 
 # Task 5
 print("\n--- Task 5 ---")
+# Create basic rules
+forget_value = 0.8
+memorize_value = 0.2
 
-# Change forget- and memorize value on R1 and R3
-R1.forget_value = R3.forget_value = 0.8
-R1.memorize_value = R3.memorize_value = 0.2
+rec_rule = Memory(forget_value, memorize_value,
+            {
+                "lt40": 5, "NOT lt40": 5,
+                "ge40": 5, "NOT ge40": 5,
+                "premeno": 5, "NOT premeno": 5,
+                "inv0-2": 5, "NOT inv0-2": 5,
+                "inv3-5": 5, "NOT inv3-5": 5,
+                "inv6-8": 5, "NOT inv6-8": 5,
+                "deg1": 5, "NOT deg1": 5,
+                "deg2": 5, "NOT deg2": 5,
+                "deg3": 5, "NOT deg3": 5
+            }
+            )
 
-# Use R1 to learn new rule for Recurrence.
+non_rec_rule = Memory(forget_value, memorize_value,
+            {
+                "lt40": 5, "NOT lt40": 5,
+                "ge40": 5, "NOT ge40": 5,
+                "premeno": 5, "NOT premeno": 5,
+                "inv0-2": 5, "NOT inv0-2": 5,
+                "inv3-5": 5, "NOT inv3-5": 5,
+                "inv6-8": 5, "NOT inv6-8": 5,
+                "deg1": 5, "NOT deg1": 5,
+                "deg2": 5, "NOT deg2": 5,
+                "deg3": 5, "NOT deg3": 5
+            }
+            )
+
+# Learn new rule for Recurrence
 n = 100  # Number of rounds
 for i in range(n):
     observation_id = random.choice(list(range(len(rec_patients))))
     choose_rec = random.choice([0, 1])  # Rec (1) or Non-Rec (0)
     if choose_rec == 1:
-        type_i_feedback(rec_patients[observation_id], R1)
+        type_i_feedback(rec_patients[observation_id], rec_rule)
     else:
-        type_ii_feedback(non_rec_patients[observation_id], R1)
+        type_ii_feedback(non_rec_patients[observation_id], rec_rule)
 
-print("IF " + " AND ".join(R1.get_condition()) + " THEN Recurrence")
+print("IF " + " AND ".join(rec_rule.get_condition()) + " THEN Recurrence")
 
 # Task 6
 print("\n--- Task 6 ---")
 
-# Use R3 to learn new rule for Non-Recurrence.
+# Learn new rule for Non-Recurrence
 n = 100  # Number of rounds
 for i in range(n):
     observation_id = random.choice(list(range(len(rec_patients))))
     choose_rec = random.choice([0, 1])  # Rec (1) or Non-Rec (0)
     if choose_rec == 1:
-        type_i_feedback(non_rec_patients[observation_id], R3)
+        type_i_feedback(non_rec_patients[observation_id], non_rec_rule)
     else:
-        type_ii_feedback(rec_patients[observation_id], R3)
+        type_ii_feedback(rec_patients[observation_id], non_rec_rule)
 
-print("IF " + " AND ".join(R3.get_condition()) + " THEN Non-Recurrence")
+print("IF " + " AND ".join(non_rec_rule.get_condition()) + " THEN Non-Recurrence")
+
+print("\nClassifying with new learned rules")
+for i in range(len(patients)):
+    print(
+        f"Patient {i+1} classified as: {classify(patients[i], [rec_rule], [non_rec_rule])}."
+        f" Actual: {"Recurrence " if patients[i] in rec_patients else "Non-Recurrence"}"
+    )
+
+# Task 7
+print("\n--- Task 7 ---")
+
+# Learn new rule for Recurrence
+forget_value = 0.5
+memorize_value = 0.5
+
+rec_rule = Memory(forget_value, memorize_value,
+            {
+                "lt40": 5, "NOT lt40": 5,
+                "ge40": 5, "NOT ge40": 5,
+                "premeno": 5, "NOT premeno": 5,
+                "inv0-2": 5, "NOT inv0-2": 5,
+                "inv3-5": 5, "NOT inv3-5": 5,
+                "inv6-8": 5, "NOT inv6-8": 5,
+                "deg1": 5, "NOT deg1": 5,
+                "deg2": 5, "NOT deg2": 5,
+                "deg3": 5, "NOT deg3": 5
+            }
+            )
+
+non_rec_rule = Memory(forget_value, memorize_value,
+            {
+                "lt40": 5, "NOT lt40": 5,
+                "ge40": 5, "NOT ge40": 5,
+                "premeno": 5, "NOT premeno": 5,
+                "inv0-2": 5, "NOT inv0-2": 5,
+                "inv3-5": 5, "NOT inv3-5": 5,
+                "inv6-8": 5, "NOT inv6-8": 5,
+                "deg1": 5, "NOT deg1": 5,
+                "deg2": 5, "NOT deg2": 5,
+                "deg3": 5, "NOT deg3": 5
+            }
+            )
+
+# Learn new rule for Recurrence
+n = 100  # Number of rounds
+for i in range(n):
+    observation_id = random.choice(list(range(len(rec_patients))))
+    choose_rec = random.choice([0, 1])  # Rec (1) or Non-Rec (0)
+    if choose_rec == 1:
+        type_i_feedback(rec_patients[observation_id], rec_rule)
+    else:
+        type_ii_feedback(non_rec_patients[observation_id], rec_rule)
+
+print("IF " + " AND ".join(rec_rule.get_condition()) + " THEN Recurrence")
+
+# Learn new rule for Non-Recurrence
+n = 100  # Number of rounds
+for i in range(n):
+    observation_id = random.choice(list(range(len(rec_patients))))
+    choose_rec = random.choice([0, 1])  # Rec (1) or Non-Rec (0)
+    if choose_rec == 1:
+        type_i_feedback(non_rec_patients[observation_id], non_rec_rule)
+    else:
+        type_ii_feedback(rec_patients[observation_id], non_rec_rule)
+
+print("IF " + " AND ".join(non_rec_rule.get_condition()) + " THEN Non-Recurrence")
+
+print("\nClassifying with new learned rules")
+for i in range(len(patients)):
+    print(
+        f"Patient {i+1} classified as: {classify(patients[i], [rec_rule], [non_rec_rule])}."
+        f" Actual: {"Recurrence " if patients[i] in rec_patients else "Non-Recurrence"}"
+    )
+
+# Task 8
+print("\n--- Task 8 ---")
+
+# Learn new rule for Recurrence
+forget_value = 0.2
+memorize_value = 0.8
+
+rec_rule = Memory(forget_value, memorize_value,
+            {
+                "lt40": 5, "NOT lt40": 5,
+                "ge40": 5, "NOT ge40": 5,
+                "premeno": 5, "NOT premeno": 5,
+                "inv0-2": 5, "NOT inv0-2": 5,
+                "inv3-5": 5, "NOT inv3-5": 5,
+                "inv6-8": 5, "NOT inv6-8": 5,
+                "deg1": 5, "NOT deg1": 5,
+                "deg2": 5, "NOT deg2": 5,
+                "deg3": 5, "NOT deg3": 5
+            }
+            )
+
+non_rec_rule = Memory(forget_value, memorize_value,
+            {
+                "lt40": 5, "NOT lt40": 5,
+                "ge40": 5, "NOT ge40": 5,
+                "premeno": 5, "NOT premeno": 5,
+                "inv0-2": 5, "NOT inv0-2": 5,
+                "inv3-5": 5, "NOT inv3-5": 5,
+                "inv6-8": 5, "NOT inv6-8": 5,
+                "deg1": 5, "NOT deg1": 5,
+                "deg2": 5, "NOT deg2": 5,
+                "deg3": 5, "NOT deg3": 5
+            }
+            )
+
+# Learn new rule for Recurrence
+n = 100  # Number of rounds
+for i in range(n):
+    observation_id = random.choice(list(range(len(rec_patients))))
+    choose_rec = random.choice([0, 1])  # Rec (1) or Non-Rec (0)
+    if choose_rec == 1:
+        type_i_feedback(rec_patients[observation_id], rec_rule)
+    else:
+        type_ii_feedback(non_rec_patients[observation_id], rec_rule)
+
+print("IF " + " AND ".join(rec_rule.get_condition()) + " THEN Recurrence")
+
+# Learn new rule for Non-Recurrence
+n = 100  # Number of rounds
+for i in range(n):
+    observation_id = random.choice(list(range(len(rec_patients))))
+    choose_rec = random.choice([0, 1])  # Rec (1) or Non-Rec (0)
+    if choose_rec == 1:
+        type_i_feedback(non_rec_patients[observation_id], non_rec_rule)
+    else:
+        type_ii_feedback(rec_patients[observation_id], non_rec_rule)
+
+print("IF " + " AND ".join(non_rec_rule.get_condition()) + " THEN Non-Recurrence")
+
+print("\nClassifying with new learned rules")
+for i in range(len(patients)):
+    print(
+        f"Patient {i+1} classified as: {classify(patients[i], [rec_rule], [non_rec_rule])}."
+        f" Actual: {"Recurrence " if patients[i] in rec_patients else "Non-Recurrence"}"
+    )
