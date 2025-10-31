@@ -1,6 +1,9 @@
 from dash import Dash, html, dcc, Input, Output, callback
 import plotly.graph_objs as go
+import numpy as np
 
+
+marks_dict = {i: str(i) for i in [0, 0.25, 0.5, 0.75, 1]}
 
 app = Dash(__name__)
 app.layout = html.Div([
@@ -9,25 +12,25 @@ app.layout = html.Div([
     html.Div([
         html.Label("s"),
         dcc.Slider(id='s-slider', min=1, max=25, step=1, value=1,
-                   marks={i: str(i) for i in range(1, 25)})
+                   marks={i: str(i) for i in range(1, 26)})
     ], style={'margin': '20px'}),
 
     html.Div([
         html.Label("P(L|Y)"),
         dcc.Slider(id='P_L_Y-slider', min=0, max=1, step=0.05, value=0.5,
-                   marks={i: str(i) for i in range(0, 10)})
+                   marks=marks_dict)
     ], style={'margin': '20px'}),
 
     html.Div([
         html.Label("P(Y)"),
         dcc.Slider(id='P_Y-slider', min=0, max=1, step=0.05, value=0.5,
-                   marks={i: str(i) for i in range(0, 10)})
+                   marks=marks_dict)
     ], style={'margin': '20px'}),
 
     html.Div([
         html.Label("P(nL|nY)"),
         dcc.Slider(id='P_nL_nY-slider', min=0, max=1, step=0.05, value=0.5,
-                   marks={i: str(i) for i in range(0, 10)})
+                   marks=marks_dict)
     ], style={'margin': '20px'}),
 
     dcc.Graph(id='bar-chart')
