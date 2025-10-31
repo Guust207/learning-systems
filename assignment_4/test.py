@@ -5,4 +5,6 @@ row_idx = ["pi1", "pi2", "pi3", "pi4", "pi5", "pi6", "pi7", "pi8",]
 
 df = pd.DataFrame(data=pi_automatas, index=row_idx)
 
-print(df)
+test = [i for i in range(1, 8)]
+
+print(test)
