@@ -70,15 +70,53 @@ def calculate_automatas(s, P_L_Y, P_Y, P_nL_nY):
     y_values = probs
 
     # Update the figure for bar chart
-    fig = go.Figure(
-        data=[go.Bar(x=x_values, y=y_values, marker=dict(color="royalblue"))],
-        layout=go.Layout(
-            title=dict(text="Dynamic Stationary Distribution for Literal Automaton", x=0.5),
-            xaxis=dict(title="π"),
-            yaxis=dict(title="Probabilities", range=[0, 1], fixedrange=True),
-            height=400,
-            margin=dict(l=50, r=30, t=50, b=50)
-        ))
+    fig = go.Figure(data=[go.Bar(x=x_values, y=y_values)])
+
+    fig.update_traces(marker_color="gray", marker_line_color="black", marker_line_width=2, opacity=0.8)
+
+    fig.update_layout(
+        title=dict(text="Dynamic Stationary Distribution for Literal Automaton", x=0.5),
+        xaxis=dict(title="π"),
+        yaxis=dict(title="Probabilities", range=[0, 1], fixedrange=True),
+        bargap=0,
+        height=400,
+        margin=dict(l=50, r=30, t=50, b=50),
+        shapes=[
+            dict(
+                type="line",
+                xref="x",
+                yref="paper",
+                x0=4.5,
+                x1=4.5,
+                y0=0,
+                y1=1,
+                line=dict(color="black", width=2, dash="dot")
+            )
+        ],
+        annotations=[
+            # Forgotten
+            dict(
+                x=4,  # roughly center of bars 1–4
+                y=0.95,
+                xref='x',
+                yref='paper',
+                text="Forgotten",
+                showarrow=False,
+                font=dict(size=14, color="black"),
+                align="center"
+            ),
+            # Memorized
+            dict(
+                x=5,
+                y=0.95,
+                xref='x',
+                yref='paper',
+                text="Memorized",
+                showarrow=False,
+                font=dict(size=14, color="black"),
+                align="center"
+            )
+        ])
 
     return fig
 
