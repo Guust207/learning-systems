@@ -8,35 +8,45 @@ marks = [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5,
 marks_dict = {i: str(i) for i in marks}
 
 app = Dash(__name__)
-app.layout = html.Div([
-    html.H3("Assignment 4"),
+app.layout = html.Div(
+    [
+        html.H3("Assignment 4"),
 
-    html.Div([
-        html.Label("s"),
-        dcc.Slider(id='s-slider', min=1, max=25, step=1, value=1,
-                   marks={i: str(i) for i in range(1, 26)})
-    ], style={'margin': '20px'}),
+        html.Div([
+            html.Label("s"),
+            dcc.Slider(id='s-slider', min=1, max=25, step=1, value=1,
+                       marks={i: str(i) for i in range(1, 26)})
+        ], style={'margin': '20px'}),
 
-    html.Div([
-        html.Label("P(L|Y)"),
-        dcc.Slider(id='P_L_Y-slider', min=0, max=1, step=0.05, value=0.5,
-                   marks=marks_dict)
-    ], style={'margin': '20px'}),
+        html.Div([
+            html.Label("P(L|Y)"),
+            dcc.Slider(id='P_L_Y-slider', min=0, max=1, step=0.05, value=0.5,
+                       marks=marks_dict)
+        ], style={'margin': '20px'}),
 
-    html.Div([
-        html.Label("P(Y)"),
-        dcc.Slider(id='P_Y-slider', min=0, max=1, step=0.05, value=0.5,
-                   marks=marks_dict)
-    ], style={'margin': '20px'}),
+        html.Div([
+            html.Label("P(Y)"),
+            dcc.Slider(id='P_Y-slider', min=0, max=1, step=0.05, value=0.5,
+                       marks=marks_dict)
+        ], style={'margin': '20px'}),
 
-    html.Div([
-        html.Label("P(nL|nY)"),
-        dcc.Slider(id='P_nL_nY-slider', min=0, max=1, step=0.05, value=0.5,
-                   marks=marks_dict)
-    ], style={'margin': '20px'}),
+        html.Div([
+            html.Label("P(nL|nY)"),
+            dcc.Slider(id='P_nL_nY-slider', min=0, max=1, step=0.05, value=0.5,
+                       marks=marks_dict)
+        ], style={'margin': '20px'}),
 
-    dcc.Graph(id='bar-chart')
-])
+        dcc.Graph(id='bar-chart')
+    ],
+    style={
+        "width": "60%",
+        "margin": "0 auto",
+        "textAlign": "center",
+        "backgroundColor": "#f9f9f9",
+        "padding": "30px",
+        "borderRadius": "12px",
+        "boxShadow": "0px 0px 12px rgba(0,0,0,0.1)"
+    })
 
 
 @callback(
@@ -72,7 +82,7 @@ def calculate_automatas(s, P_L_Y, P_Y, P_nL_nY):
     # Update the figure for bar chart
     fig = go.Figure(data=[go.Bar(x=x_values, y=y_values)])
 
-    fig.update_traces(marker_color="gray", marker_line_color="black", marker_line_width=2, opacity=0.8)
+    fig.update_traces(marker_color="#828282", marker_line_color="black", marker_line_width=2, opacity=0.8)
 
     fig.update_layout(
         title=dict(text="Dynamic Stationary Distribution for Literal Automaton", x=0.5),
