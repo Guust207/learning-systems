@@ -2,8 +2,10 @@ from dash import Dash, html, dcc, Input, Output, callback
 import plotly.graph_objs as go
 import numpy as np
 
+marks = [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5,
+         0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1]
 
-marks_dict = {i: str(i) for i in [0, 0.25, 0.5, 0.75, 1]}
+marks_dict = {i: str(i) for i in marks}
 
 app = Dash(__name__)
 app.layout = html.Div([
