@@ -23,7 +23,7 @@
 #include <string.h>
 
 #ifndef BOARD_DIM
-    #define BOARD_DIM 7
+    #define BOARD_DIM 3
 #endif
 
 #ifndef CLASS_DATASET_SIZE
@@ -162,29 +162,37 @@ void add_char_to_string(char *s, char c)
 	s[l+1] = '\0';
 }
 
-void file_wipe()
-{
-	char dataset_fpath[30];
-	sprintf(dataset_fpath, "games/%d/%d.txt", BOARD_DIM, 0);
-
-	FILE *fptr = fopen(dataset_fpath, "w");
-	fprintf(fptr, "");
-	fclose(fptr);
-
-	sprintf(dataset_fpath, "games/%d/%d.txt", BOARD_DIM, 1);
-	fptr = fopen(dataset_fpath, "w");
-	fprintf(fptr, "");
-	fclose(fptr);
-}
-
 void hg_file_write(struct hex_game *hg, int winner)
 {
+	// Open files
+	static int ran_once = 0;
+
+	// Path to 0.txt or 1.txt
 	char dataset_fpath[30];
 	sprintf(dataset_fpath, "games/%d/%d.txt", BOARD_DIM, winner);
 
-	FILE *fptr = fopen(dataset_fpath, "a");
+	// Path to full dataset
+	char dataset_fpath_2[30];
+	sprintf(dataset_fpath_2, "games/%d/dataset.txt", BOARD_DIM);
+
+	FILE *fptr;
+	FILE *fptr_full;
+
+
+
+	if (ran_once++ == 0)
+	{
+		fptr = fopen(dataset_fpath, "w");
+		fptr_full = fopen(dataset_fpath_2, "w");
+	}
+	else
+	{
+		fptr = fopen(dataset_fpath, "a");
+		fptr_full = fopen(dataset_fpath_2, "a");
+	}
 
 	char hg_str[BOARD_DIM * BOARD_DIM + 10] = "";
+	char hg_str_full[BOARD_DIM * BOARD_DIM + 10] = "";
 
 	for (int i = 0; i < BOARD_DIM; ++i)
 	{
@@ -193,22 +201,36 @@ void hg_file_write(struct hex_game *hg, int winner)
 			if (hg->board[((i+1)*(BOARD_DIM+2) + j + 1)*2] == 1)
 			{
 				add_char_to_string(hg_str, 'X');
+				add_char_to_string(hg_str_full, 'X');
 			}
 			else if (hg->board[((i+1)*(BOARD_DIM+2) + j + 1)*2 + 1] == 1)
 			{
 				add_char_to_string(hg_str, '0');
+				add_char_to_string(hg_str_full, '0');
 			}
 			else
 			{
 				add_char_to_string(hg_str, '.');
+				add_char_to_string(hg_str_full, '.');
 			}
 		}
 	}
+
+	// Write game to 0.txt or 1.txt
 	add_char_to_string(hg_str, '\n');
-
 	fprintf(fptr, "%s", hg_str);
-
 	fclose(fptr);
+
+	// Write game to dataset.txt
+	char winner_str[2];
+	sprintf(winner_str, "%d", winner);
+
+	add_char_to_string(hg_str_full, ',');
+	add_char_to_string(hg_str_full, winner_str[0]);
+	add_char_to_string(hg_str_full, '\n');
+
+	fprintf(fptr_full, "%s", hg_str_full);
+	fclose(fptr_full);
 }
 
 int main()
@@ -219,8 +241,6 @@ int main()
 
 	int valid_0_wins = 0;
 	int valid_1_wins = 0;
-
-	file_wipe();
 
 	while (valid_0_wins < CLASS_DATASET_SIZE || valid_1_wins < CLASS_DATASET_SIZE)
 	{
@@ -241,8 +261,11 @@ int main()
 		}
 
 		// If open positions more than 45% of board size, validate game
-		const int open_pos_req = BOARD_DIM * BOARD_DIM * 0.45;
-		// const int open_pos_req = 0;
+		int open_pos_req;
+		if (BOARD_DIM == 3)
+			open_pos_req = 0;
+		if (BOARD_DIM == 7)
+			open_pos_req = BOARD_DIM * BOARD_DIM * 0.45;
 
 		if (hg.number_of_open_positions >= open_pos_req)
 		{
