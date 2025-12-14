@@ -179,7 +179,7 @@ void hg_file_write(struct hex_game *hg, int winner)
 
 	FILE *fptr = fopen(dataset_fpath, "a");
 
-	char hg_str[BOARD_DIM * BOARD_DIM * 2 + 10];
+	char hg_str[BOARD_DIM * BOARD_DIM + 10] = "";
 
 	for (int i = 0; i < BOARD_DIM; ++i)
 	{
@@ -200,7 +200,6 @@ void hg_file_write(struct hex_game *hg, int winner)
 		}
 	}
 	add_char_to_string(hg_str, '\n');
-
 
 	fprintf(fptr, "%s", hg_str);
 
