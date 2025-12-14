@@ -67,9 +67,9 @@ def calculate_automatas(s, P_L_Y, P_Y, P_nL_nY):
         P_Y ** 2 * P_L_Y ** 0 * P_nL_Y ** 5 * s ** 2 * (P_L_Y * P_Y + P_nL_nY * P_nY) ** 2,
         P_Y ** 1 * P_L_Y ** 0 * P_nL_Y ** 4 * s ** 3 * (P_L_Y * P_Y + P_nL_nY * P_nY) ** 3,
         P_Y ** 0 * P_L_Y ** 0 * P_nL_Y ** 3 * s ** 4 * (P_L_Y * P_Y + P_nL_nY * P_nY) ** 4,
-        P_Y ** 0 * P_L_Y ** 1 * P_nL_Y ** 2 * s ** 5 * (P_L_Y * P_Y + P_nL_nY * P_nY) ** 5,
-        P_Y ** 0 * P_L_Y ** 2 * P_nL_Y ** 1 * s ** 6 * (P_L_Y * P_Y + P_nL_nY * P_nY) ** 6,
-        P_Y ** 0 * P_L_Y ** 3 * P_nL_Y ** 0 * s ** 7 * (P_L_Y * P_Y + P_nL_nY * P_nY) ** 7
+        P_Y ** 0 * P_L_Y ** 1 * P_nL_Y ** 2 * s ** 5 * (P_L_Y * P_Y + P_nL_nY * P_nY) ** 4,
+        P_Y ** 0 * P_L_Y ** 2 * P_nL_Y ** 1 * s ** 6 * (P_L_Y * P_Y + P_nL_nY * P_nY) ** 4,
+        P_Y ** 0 * P_L_Y ** 3 * P_nL_Y ** 0 * s ** 7 * (P_L_Y * P_Y + P_nL_nY * P_nY) ** 4
     ]
 
     alfa = 1 / sum(probs)
