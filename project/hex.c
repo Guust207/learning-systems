@@ -42,64 +42,76 @@ struct hex_game {
 
 void hg_init(struct hex_game *hg)
 {
-	for (int i = 0; i < BOARD_DIM+2; ++i) {
-		for (int j = 0; j < BOARD_DIM+2; ++j) {
-			hg->board[(i*(BOARD_DIM + 2) + j) * 2] = 0;
-			hg->board[(i*(BOARD_DIM + 2) + j) * 2 + 1] = 0;
+	const int stride = BOARD_DIM + 2;
 
-			if (i > 0 && i < BOARD_DIM + 1 && j > 0 && j < BOARD_DIM + 1) {
-				hg->open_positions[(i-1)*BOARD_DIM + j - 1] = i*(BOARD_DIM + 2) + j;
-			}
+	// Clear board + connectivity
+	for (int i = 0; i < stride * stride; ++i) {
+		hg->board[i * 2]     = 0;
+		hg->board[i * 2 + 1] = 0;
+		hg->connected[i * 2]     = 0;
+		hg->connected[i * 2 + 1] = 0;
+	}
 
-			if (i == 0) {
-				hg->connected[(i*(BOARD_DIM + 2) + j) * 2] = 1;
-			} else {
-				hg->connected[(i*(BOARD_DIM + 2) + j) * 2] = 0;
-			}
-			
-			if (j == 0) {
-				hg->connected[(i*(BOARD_DIM + 2) + j) * 2 + 1] = 1;
-			} else {
-				hg->connected[(i*(BOARD_DIM + 2) + j) * 2 + 1] = 0;
-			}
+	// Initialize open positions (playable cells only)
+	int idx = 0;
+	for (int i = 1; i <= BOARD_DIM; ++i) {
+		for (int j = 1; j <= BOARD_DIM; ++j) {
+			hg->open_positions[idx++] = i * stride + j;
 		}
 	}
-	hg->number_of_open_positions = BOARD_DIM*BOARD_DIM;
+
+	hg->number_of_open_positions = BOARD_DIM * BOARD_DIM;
 }
 
 int hg_connect(struct hex_game *hg, int player, int position)
 {
+	// Terminal edge reached
+	if (player == 0 && position / (BOARD_DIM + 2) == BOARD_DIM + 1)
+		return 1;
+
+	if (player == 1 && position % (BOARD_DIM + 2) == BOARD_DIM + 1)
+		return 1;
+
 	hg->connected[position*2 + player] = 1;
-
-	if (player == 0 && position / (BOARD_DIM + 2) == BOARD_DIM) {
-		return 1;
-	}
-
-	if (player == 1 && position % (BOARD_DIM + 2) == BOARD_DIM) {
-		return 1;
-	}
 
 	for (int i = 0; i < 6; ++i) {
 		int neighbor = position + neighbors[i];
-		if (hg->board[neighbor*2 + player] && !hg->connected[neighbor*2 + player]) {
-			if (hg_connect(hg, player, neighbor)) {
+
+		// If neighbor is terminal padding → win
+		if (player == 0 && neighbor / (BOARD_DIM + 2) == BOARD_DIM + 1)
+			return 1;
+
+		if (player == 1 && neighbor % (BOARD_DIM + 2) == BOARD_DIM + 1)
+			return 1;
+
+		// Continue DFS through stones only
+		if (hg->board[neighbor*2 + player] &&
+			!hg->connected[neighbor*2 + player]) {
+			if (hg_connect(hg, player, neighbor))
 				return 1;
 			}
-		}
 	}
+
 	return 0;
 }
 
 int hg_winner(struct hex_game *hg, int player, int position)
 {
-	for (int i = 0; i < 6; ++i) {
-		int neighbor = position + neighbors[i];
-		if (hg->connected[neighbor*2 + player]) {
-			return hg_connect(hg, player, position);
-		}
+	int row = position / (BOARD_DIM + 2);
+	int col = position % (BOARD_DIM + 2);
+
+	// Player 0 (X): top → bottom
+	if (player == 0) {
+		if (row != 1) return 0;
 	}
-	return 0;
+	// Player 1 (O): left → right
+	else {
+		if (col != 1) return 0;
+	}
+
+	return hg_connect(hg, player, position);
 }
+
 
 int hg_place_piece_randomly(struct hex_game *hg, int player)
 {
@@ -116,11 +128,6 @@ int hg_place_piece_randomly(struct hex_game *hg, int player)
 	hg->number_of_open_positions--;
 
 	return empty_position;
-}
-
-void hg_place_piece_based_on_tm_input(struct hex_game *hg, int player)
-{
-	printf("TM!\n");
 }
 
 int hg_full_board(struct hex_game *hg)
@@ -151,9 +158,7 @@ void hg_print(struct hex_game *hg)
 void add_char_to_string(char *s, char c)
 {
 	size_t l = strlen(s);
-
 	s[l] = c;
-
 	s[l+1] = '\0';
 }
 
@@ -217,15 +222,17 @@ int main()
 
 	file_wipe();
 
-	while (valid_0_wins + valid_1_wins < CLASS_DATASET_SIZE * 2)
+	while (valid_0_wins < CLASS_DATASET_SIZE || valid_1_wins < CLASS_DATASET_SIZE)
 	{
 		hg_init(&hg);
 
 		int player = 0;
-		while (!hg_full_board(&hg)) {
+		while (!hg_full_board(&hg))
+		{
 			int position = hg_place_piece_randomly(&hg, player);
 			
-			if (hg_winner(&hg, player, position)) {
+			if (hg_winner(&hg, player, position))
+			{
 				winner = player;
 				break;
 			}
@@ -235,16 +242,22 @@ int main()
 
 		// If open positions more than 45% of board size, validate game
 		const int open_pos_req = BOARD_DIM * BOARD_DIM * 0.45;
+		// const int open_pos_req = 0;
+
 		if (hg.number_of_open_positions >= open_pos_req)
 		{
 			printf("\nPlayer %d wins!\n", winner);
-			//hg_print(&hg);
-			hg_file_write(&hg, winner);
 
 			if (winner == 0 && valid_0_wins < CLASS_DATASET_SIZE)
+			{
 				valid_0_wins++;
-			else if (valid_1_wins < CLASS_DATASET_SIZE)
+				hg_file_write(&hg, winner);
+			}
+			else if (winner == 1 && valid_1_wins < CLASS_DATASET_SIZE)
+			{
 				valid_1_wins++;
+				hg_file_write(&hg, winner);
+			}
 
 			if (valid_0_wins + valid_1_wins % 100)
 				printf("Progress: %d / %d\n", valid_0_wins + valid_1_wins, CLASS_DATASET_SIZE * 2);
