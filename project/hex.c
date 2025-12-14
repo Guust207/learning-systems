@@ -23,7 +23,7 @@
 #include <string.h>
 
 #ifndef BOARD_DIM
-    #define BOARD_DIM 3
+    #define BOARD_DIM 7
 #endif
 
 #ifndef CLASS_DATASET_SIZE
@@ -171,14 +171,12 @@ void hg_file_write(struct hex_game *hg, int winner)
 	char dataset_fpath[30];
 	sprintf(dataset_fpath, "games/%d/%d.txt", BOARD_DIM, winner);
 
-	// Path to full dataset
+	// Path to full dataset.csv
 	char dataset_fpath_2[30];
-	sprintf(dataset_fpath_2, "games/%d/dataset.txt", BOARD_DIM);
+	sprintf(dataset_fpath_2, "games/%d/dataset.csv", BOARD_DIM);
 
 	FILE *fptr;
 	FILE *fptr_full;
-
-
 
 	if (ran_once++ == 0)
 	{
