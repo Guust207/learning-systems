@@ -25,6 +25,10 @@
     #define BOARD_DIM 7
 #endif
 
+#ifndef CLASS_DATASET_SIZE
+	#define CLASS_DATASET_SIZE 5000 // Total dataset is double
+#endif
+
 int neighbors[] = {-(BOARD_DIM+2) + 1, -(BOARD_DIM+2), -1, 1, (BOARD_DIM+2), (BOARD_DIM+2) - 1};
 
 struct hex_game {
@@ -136,20 +140,25 @@ void hg_print(struct hex_game *hg)
 			} else if (hg->board[((i+1)*(BOARD_DIM+2) + j + 1)*2 + 1] == 1) {
 				printf(" 0");
 			} else {
-				printf(" -");
+				printf(" .");
 			}
 		}
 		printf("\n");
 	}
 }
 
-int main() {
+int main()
+{
 	struct hex_game hg;
 
 	int winner = -1;
-	int valid_games_count = 0;
 
-	for (int game = 0; game < 10000; ++game) {
+	int valid_games_count = 0;
+	int valid_0_wins = 0;
+	int valid_1_wins = 0;
+
+	while (valid_0_wins + valid_1_wins < CLASS_DATASET_SIZE * 2)
+	{
 		hg_init(&hg);
 
 		int player = 0;
@@ -166,14 +175,21 @@ int main() {
 
 		// If open positions more than 40% of board size, validate game
 		const int open_pos_req = BOARD_DIM * BOARD_DIM * 0.45;
-		if (hg.number_of_open_positions >= open_pos_req) {
-			printf("\nPlayer %d wins!\n\n", winner);
-			hg_print(&hg);
-			valid_games_count++;
+		if (hg.number_of_open_positions >= open_pos_req)
+		{
+			printf("\nPlayer %d wins!\n", winner);
+			// hg_print(&hg);
+
+			if (winner == 0 && valid_0_wins < CLASS_DATASET_SIZE)
+				valid_0_wins++;
+			else if (valid_1_wins < CLASS_DATASET_SIZE)
+				valid_1_wins++;
+
+			if (valid_0_wins + valid_1_wins % 100)
+				printf("Progress: %d / %d\n", valid_0_wins + valid_1_wins, CLASS_DATASET_SIZE * 2);
 		}
 	}
 
-	printf("\nPlayer 0: %c (Bot-Top)\n", 'X');
-	printf("Player 1: %c (Left-Right)\n", '0');
-	printf("Number of games: %d", valid_games_count);
+	printf("\nPlayer 0: %c (Bot-Top) -- %d wins\n", 'X', valid_0_wins);
+	printf("Player 1: %c (Left-Right) -- %d wins\n", '0', valid_1_wins);
 }
