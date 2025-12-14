@@ -20,6 +20,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #ifndef BOARD_DIM
     #define BOARD_DIM 7
@@ -147,15 +148,75 @@ void hg_print(struct hex_game *hg)
 	}
 }
 
+void add_char_to_string(char *s, char c)
+{
+	size_t l = strlen(s);
+
+	s[l] = c;
+
+	s[l+1] = '\0';
+}
+
+void file_wipe()
+{
+	char dataset_fpath[30];
+	sprintf(dataset_fpath, "games/%d/%d.txt", BOARD_DIM, 0);
+
+	FILE *fptr = fopen(dataset_fpath, "w");
+	fprintf(fptr, "");
+	fclose(fptr);
+
+	sprintf(dataset_fpath, "games/%d/%d.txt", BOARD_DIM, 1);
+	fptr = fopen(dataset_fpath, "w");
+	fprintf(fptr, "");
+	fclose(fptr);
+}
+
+void hg_file_write(struct hex_game *hg, int winner)
+{
+	char dataset_fpath[30];
+	sprintf(dataset_fpath, "games/%d/%d.txt", BOARD_DIM, winner);
+
+	FILE *fptr = fopen(dataset_fpath, "a");
+
+	char hg_str[BOARD_DIM * BOARD_DIM * 2 + 10];
+
+	for (int i = 0; i < BOARD_DIM; ++i)
+	{
+		for (int j = 0; j < BOARD_DIM; ++j)
+		{
+			if (hg->board[((i+1)*(BOARD_DIM+2) + j + 1)*2] == 1)
+			{
+				add_char_to_string(hg_str, 'X');
+			}
+			else if (hg->board[((i+1)*(BOARD_DIM+2) + j + 1)*2 + 1] == 1)
+			{
+				add_char_to_string(hg_str, '0');
+			}
+			else
+			{
+				add_char_to_string(hg_str, '.');
+			}
+		}
+	}
+	add_char_to_string(hg_str, '\n');
+
+
+	fprintf(fptr, "%s", hg_str);
+
+	fclose(fptr);
+}
+
 int main()
 {
 	struct hex_game hg;
 
 	int winner = -1;
 
-	int valid_games_count = 0;
 	int valid_0_wins = 0;
 	int valid_1_wins = 0;
+
+	file_wipe();
 
 	while (valid_0_wins + valid_1_wins < CLASS_DATASET_SIZE * 2)
 	{
@@ -173,12 +234,13 @@ int main()
 			player = 1 - player;
 		}
 
-		// If open positions more than 40% of board size, validate game
+		// If open positions more than 45% of board size, validate game
 		const int open_pos_req = BOARD_DIM * BOARD_DIM * 0.45;
 		if (hg.number_of_open_positions >= open_pos_req)
 		{
 			printf("\nPlayer %d wins!\n", winner);
-			// hg_print(&hg);
+			//hg_print(&hg);
+			hg_file_write(&hg, winner);
 
 			if (winner == 0 && valid_0_wins < CLASS_DATASET_SIZE)
 				valid_0_wins++;
